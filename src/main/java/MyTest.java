@@ -52,6 +52,18 @@ public class MyTest extends Locust {
         String uri = "/" + parts[1];
         System.out.println(uri);
 
+        String s = "1 2 ";
+
+        StringBuilder buffer = new StringBuilder("1234");
+
+        System.out.println(buffer.toString());
+        System.out.println("len: " + s.split(" ").length);
+        System.out.println("index: " + s.indexOf("2", 3) );
+
+        for(String k : s.split(" ")){
+            System.out.println(">" + k + "<");
+        }
+
 
 
 

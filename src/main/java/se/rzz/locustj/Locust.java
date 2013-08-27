@@ -65,6 +65,8 @@ public abstract class Locust implements Serializable {
         nextTickStart = System.currentTimeMillis() + (long)(Math.random()*(maxDelay()-minDelay())) + minDelay();
     }
 
+
+
     public void runNext(){
         currentTask = currentGroup.getNextTask();
     }

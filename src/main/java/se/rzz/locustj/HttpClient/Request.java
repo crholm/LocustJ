@@ -1,5 +1,8 @@
 package se.rzz.locustj.HttpClient;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.SequenceInputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,7 +21,7 @@ public class Request {
     private String protocol;
     private Map<String, String> headers = new HashMap<>();
     private Map<String, String> cookies = new HashMap<>();
-    private String body;
+    private InputStream body;
 
     public HttpMethod getMethod() {
         return method;
@@ -75,17 +78,23 @@ public class Request {
     }
 
     public void setBody(String body){
+        setBody(new ByteArrayInputStream(body.getBytes()));
+    }
+
+    public void setBody(InputStream body){
         this.body = body;
     }
 
-    public String getBody(){
+    public InputStream getBodyInputStream(){
         return body;
     }
 
 
 
+
     public String toString(){
         final String NL = "\r\n";
+
         StringBuilder sb = new StringBuilder();
 
         sb.append(method).append(" ").append(uri).append(" ").append("HTTP/1.1").append(NL);
@@ -107,11 +116,13 @@ public class Request {
 
         sb.append(NL).append(NL);
 
-        if(body != null){
-            sb.append(body);
-        }
-
-
         return sb.toString();
+    }
+
+    public InputStream getInputStream(){
+
+        ByteArrayInputStream head = new ByteArrayInputStream(toString().getBytes());
+
+        return new SequenceInputStream(head, body);
     }
 }
