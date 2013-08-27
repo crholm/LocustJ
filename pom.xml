@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>se.rzz</groupId>
-    <artifactId>locust-j</artifactId>
+    <artifactId>locustPrototype-j</artifactId>
     <version>1.0-SNAPSHOT</version>
 
 

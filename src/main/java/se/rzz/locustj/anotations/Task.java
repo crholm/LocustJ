@@ -17,6 +17,6 @@ import java.lang.annotation.Target;
 public @interface Task {
     int ratio() default 1;
     String group() default "default";
-    String name();
+    String name() default "";
 
 }

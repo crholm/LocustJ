@@ -23,7 +23,6 @@ public class TaskGroup {
         double tmpScore;
     }
 
-    private Locust parrentToMethods;
     private Map<String, Method> tasks = new HashMap<>();
     private List<RatioTask> tasksList = new ArrayList<>();
 
@@ -31,9 +30,9 @@ public class TaskGroup {
 
     private String name;
 
-    public TaskGroup(String name, Locust parrentToMethods){
+    public TaskGroup(String name){
         this.name = name;
-        this.parrentToMethods = parrentToMethods;
+
     }
 
     public String getName(){
@@ -50,17 +49,8 @@ public class TaskGroup {
         tasksList.add(r);
     }
 
-    public void run(String methodName){
-        try {
-            tasks.get(methodName).invoke(parrentToMethods);
-        } catch (IllegalAccessException e) {
-        } catch (InvocationTargetException e) {
-        }
-    }
 
-    public void runNext(){
-
-
+    public Method getNextTask(){
         double currentBestScore = -1;
         Method currentBestMethod = null;
 
@@ -75,17 +65,12 @@ public class TaskGroup {
                 currentBestMethod = r.method;
             }
         }
-
-        try {
-            currentBestMethod.invoke(parrentToMethods);
-        } catch (IllegalAccessException e) {
-        } catch (InvocationTargetException e) {
-        }
-
+        return currentBestMethod;
     }
 
-
-
+    public Method getTask(String methodName){
+        return tasks.get(methodName);
+    }
 
 
 }

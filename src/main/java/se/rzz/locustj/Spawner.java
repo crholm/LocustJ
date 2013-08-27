@@ -2,7 +2,6 @@ package se.rzz.locustj;
 
 import se.rzz.locustj.anotations.Task;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,11 +17,11 @@ import java.util.Map;
  */
 public class Spawner {
 
-    int swarmSize = 100;
+    int swarmSize = 1;
 
 
 
-    public Spawner(Locust... locustArray){
+    private Spawner(Locust... locustArray){
         for(Locust locust : locustArray){
 
             new Thread(new LocustCloner(locust)).start();
@@ -33,18 +32,19 @@ public class Spawner {
     }
 
     private class LocustCloner implements Runnable{
-        Locust locust;
+        Locust locustPrototype;
+        List<Locust> locustClones = new ArrayList<>();
 
-        private Map<String, TaskGroup> taskGroups = new HashMap<>();
 
-        public LocustCloner(Locust locust){
-            this.locust = locust;
+        public LocustCloner(Locust locustPrototype){
+            this.locustPrototype = locustPrototype;
         }
 
 
-        private void createTaskGroups(){
+        private void createTaskGroups() throws CloneNotSupportedException {
 
-            Method methods[] = locust.getClass().getMethods();
+            Method methods[] = locustPrototype.getClass().getMethods();
+            Map<String, TaskGroup> taskGroups = new HashMap<>();
 
             for(Method method : methods){
 
@@ -54,7 +54,7 @@ public class Spawner {
                     TaskGroup taskGroup = taskGroups.get(annotation.group());
 
                     if(taskGroup == null){
-                        taskGroup = new TaskGroup(annotation.group(), locust);
+                        taskGroup = new TaskGroup(annotation.group());
                         taskGroups.put(annotation.group(), taskGroup);
                     }
 
@@ -63,18 +63,31 @@ public class Spawner {
                 }
             }
 
+            for(int i = 0; i < swarmSize; i++){
+                Locust l = locustPrototype.deepClone();
+                l.setTaskGroups(taskGroups);
+                locustClones.add(l);
+            }
+
+
         }
 
 
         @Override
         public void run() {
+            try {
+                createTaskGroups();
+            } catch (CloneNotSupportedException e) {
+                e.printStackTrace();
+                System.exit(1);
+            }
 
-
-
+            new LocustsRunner(locustClones);
 
 
         }
     }
+
 
 
 
